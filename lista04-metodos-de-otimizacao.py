@@ -91,6 +91,65 @@ def goldenSearch(f,a,b,t=1e-6):
   # retorna o pont de mínimo que é apresentado na metade do intervalo e com uma tolerância de erro igual = t/2 no intervalo [a,b] de f
   return (b+a)/2
 
+# QUESTÃO 03: implementação do método de interpolação quadrática
+def quadraticFitSearch(f,a,b,t=1e-6):
+  ''' 
+    Algoritmo para encontrar um mínimo local em um intervalo unimodal de uma função f
+    
+    Argumentos:
+      f: função objetivo
+      a: ponto de partida do intervalo
+      b: ponto final do intervalo
+      t: tolerância de erro para o ponto mínimo
+  '''
+
+  # c recebe o limite do intervalo
+  c = b
+  # atribuindo em b o meio do intervalo
+  b = (c-a)/2
+
+  # aplicando os valores na funcao f nos pontos a,b e c para análise
+  fa = f(a)
+  fb = f(b)
+  fc = f(c)
+
+  # enquanto a diferença de c para nossa tolerancia não for alcançada signafica que o minimo não foi atingido
+  while abs(c-a) < t:
+      
+    # expressão de interpolação quadrática  
+    x = 0.5*(fa*(b**2-c**2)+fb*(c**2-a**2)+fc*(a**2-b**2))/(fa*(b-c) +fb*(c-a) +fc*(a-b))
+    fx = f(x)
+    
+    # verifica se x está a direita de b
+    if x > b:
+      # se f(x) > f(b), então o mínimo está no intervalo [a,b], então [b,c] é desprezado   
+      if fx > fb:
+        c = x
+        fc = fx
+      # se f(x) < f(b), então o mínimo está no intervalo [a,b], então [b,c] é desprezado
+      else: 
+        a = b
+        fa = fb
+        b = x
+        fb = fx
+        
+    # verifica se x está a esquerda ou coincide com b (x <= b)
+    else:
+      # se f(x) > f(b), então o mínimo está no intervalo [b,c], então [a,b] é desprezado
+      if fx > fb:
+        a = x
+        fa = fx
+      # se f(x) <= f(b), então o mínimo está no intervalo [a,b], então [b,c] é desprezado  
+      else:
+        c = b
+        fc = fb
+        b = x
+        fb = fx
+
+  # Retorna ponto de mínimo com uma tolerancia t no intervalo [a,b] da função
+  return (a+c)/2
+
+
 
 # definindo uma funcao f
 f = lambda x: (x+2)**2
@@ -98,6 +157,9 @@ f = lambda x: (x+2)**2
 # aplicando os metodos a nossa funcao f
 b = bracket(1,f)
 g = goldenSearch(f,-4,1)
+q = quadraticFitSearch(f,-4,1)
 
 print(b)
 print(g)
+print(q)
+ 
